@@ -12,13 +12,11 @@ public record UpdateProductCommand(
 public record UpdateProductResult(bool IsSuccess);
 
 internal class UpdateProductCommandHandler
-    (IDocumentSession _session, ILogger<UpdateProductCommandHandler> _logger)
+    (IDocumentSession _session)
     : ICommandHandler<UpdateProductCommand, UpdateProductResult>
 {
     public async Task<UpdateProductResult> Handle(UpdateProductCommand command, CancellationToken cancellationToken)
     {
-        _logger.LogInformation("Handling UpdateProductCommand {@Command}", command
-            );
         var product = await _session.LoadAsync<Product>(command.Id, cancellationToken);
 
         if(product is null)

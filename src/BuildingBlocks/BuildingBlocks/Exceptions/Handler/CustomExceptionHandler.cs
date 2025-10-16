@@ -39,8 +39,10 @@ public class CustomExceptionHandler(ILogger<CustomExceptionHandler> logger) : IE
                exception.GetType().Name,
                context.Response.StatusCode = StatusCodes.Status404NotFound
             ),
-            _ => (string.Empty, "Internal Server Error", StatusCodes.Status500InternalServerError)
-        };
+            _ => (exception.Message,
+               exception.GetType().Name,
+               context.Response.StatusCode = StatusCodes.Status400BadRequest
+            )};
 
         var problemDetails = new ProblemDetails
         {
