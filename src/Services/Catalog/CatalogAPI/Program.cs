@@ -21,6 +21,9 @@ builder.Services.AddMarten(opts =>
     opts.AutoCreateSchemaObjects = AutoCreate.All;
 }).UseLightweightSessions();
 
+if (builder.Environment.IsDevelopment())
+    builder.Services.InitializeMartenWith<CatalogInitialData>(); //seeding operation
+
 builder.Services.AddExceptionHandler<CustomExceptionHandler>();
 
 var app = builder.Build();
