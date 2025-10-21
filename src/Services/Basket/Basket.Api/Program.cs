@@ -9,6 +9,13 @@ builder.Services.AddMediatR(config =>
     config.AddOpenBehavior(typeof(ValidationBehavior<,>));
     config.AddOpenBehavior(typeof(LoggingBehavior<,>));
 });
+
+builder.Services.AddMarten(opts =>
+{
+    opts.Connection(connectionString!);
+    opts.Schema.For<ShoppingCart>().Identity(x => x.UserName); // make username identity field
+}).UseLightweightSessions();
+
 builder.Services.AddValidatorsFromAssembly(assembly);
 
 builder.Services.AddCarter();
