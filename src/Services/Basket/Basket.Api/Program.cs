@@ -21,14 +21,11 @@ builder.Services.AddValidatorsFromAssembly(assembly);
 builder.Services.AddCarter();
 builder.Services.AddExceptionHandler<CustomExceptionHandler>();
 builder.Services.AddScoped<IBasketRespository, BasketRepository>();
-
-
+builder.Services.AddExceptionHandler<CustomExceptionHandler>();
 
 var app = builder.Build();
 
 app.MapCarter();
-
-
-app.MapGet("/", () => "Hello World!");
+app.UseExceptionHandler(options => { });
 
 app.Run();
