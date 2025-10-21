@@ -1,14 +1,14 @@
-﻿
-namespace Basket.API.Basket.StoreBasket;
+﻿namespace Basket.API.Basket.StoreBasket;
 
 public record StoreBasketCommand(ShoppingCart Cart) : ICommand<StoreBasketresult>;
 public record StoreBasketresult(string UserName);
 
-public class StoreBasketCommandHandler : ICommandHandler<StoreBasketCommand, StoreBasketresult>
+public class StoreBasketCommandHandler(IBasketRespository _repository) : ICommandHandler<StoreBasketCommand, StoreBasketresult>
 {
     public async Task<StoreBasketresult> Handle(StoreBasketCommand command, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        await _repository.StoreBasket(command.Cart, cancellationToken);
+        return new StoreBasketresult(command.Cart.UserName);
     }
 }
 

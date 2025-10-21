@@ -7,8 +7,8 @@ public class GetBasketQueryHandler(IBasketRespository _repository) : IQueryHandl
 {
     public async Task<GetBasketResult> Handle(GetBasketQuery query, CancellationToken cancellationToken)
     {
+        var basket = await _repository.GetBasket(query.UserName);
 
-
-        throw new NotImplementedException();
+        return new GetBasketResult(basket);
     }
 }

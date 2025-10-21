@@ -20,6 +20,9 @@ builder.Services.AddValidatorsFromAssembly(assembly);
 
 builder.Services.AddCarter();
 builder.Services.AddExceptionHandler<CustomExceptionHandler>();
+builder.Services.AddScoped<IBasketRespository, BasketRepository>();
+
+
 
 var app = builder.Build();
 

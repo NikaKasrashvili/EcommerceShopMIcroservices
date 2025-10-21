@@ -1,6 +1,6 @@
 ﻿namespace Basket.API.Data;
 
-public class BasketRepositrory(IDocumentSession _session) : IBasketRespository
+public class BasketRepository(IDocumentSession _session) : IBasketRespository
 {
     public async Task<ShoppingCart> GetBasket(string userName, CancellationToken cancellationToken = default)
     {
