@@ -1,7 +1,11 @@
+using HealthChecks.UI.Client;
+using Microsoft.AspNetCore.Diagnostics.HealthChecks;
+
 var builder = WebApplication.CreateBuilder(args);
 
 var assembly = typeof(Program).Assembly;
 var connectionString = builder.Configuration.GetConnectionString("Database");
+var redisConnectionString = builder.Configuration.GetConnectionString("Redis");
 
 builder.Services.AddMediatR(config =>
 {
@@ -28,11 +32,17 @@ builder.Services.AddStackExchangeRedisCache(options =>
     options.Configuration = builder.Configuration.GetConnectionString("Redis");
 });
 
-builder.Services.AddExceptionHandler<CustomExceptionHandler>();
+builder.Services.AddHealthChecks()
+    .AddRedis(redisConnectionString!)
+    .AddNpgSql(connectionString!);
 
 var app = builder.Build();
 
 app.MapCarter();
 app.UseExceptionHandler(options => { });
+app.UseHealthChecks("/health", new HealthCheckOptions
+{
+    ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
+});
 
 app.Run();
