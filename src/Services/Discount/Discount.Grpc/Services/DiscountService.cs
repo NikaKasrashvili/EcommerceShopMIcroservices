@@ -29,18 +29,48 @@ public class DiscountService
         return coupon.Adapt<CouponModel>();
     }
 
-    public override Task<CouponModel> CreateDiscount(CreateDiscountRequest request, ServerCallContext context)
+    public override async Task<CouponModel> CreateDiscount(CreateDiscountRequest request, ServerCallContext context)
     {
-        return base.CreateDiscount(request, context);
+        var coupon = request.Coupon.Adapt<Coupon>();
+        if (coupon is null)
+            throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid argument"));
+
+        _dbContext.Coupons.Add(coupon);
+        await _dbContext.SaveChangesAsync();
+
+        _logger.LogInformation("Discount is successfully created. ProductName : {ProductName}", coupon.ProductName);
+
+        return coupon.Adapt<CouponModel>();
     }
 
-    public override Task<CouponModel> UpdateDiscount(UpdateDiscountRequest request, ServerCallContext context)
+    public override async Task<CouponModel> UpdateDiscount(UpdateDiscountRequest request, ServerCallContext context)
     {
-        return base.UpdateDiscount(request, context);
+        var coupon = request.Coupon.Adapt<Coupon>();
+        if (coupon is null)
+            throw new RpcException(new Status(StatusCode.InvalidArgument, "Invalid argument"));
+
+        _dbContext.Coupons.Update(coupon);
+        await _dbContext.SaveChangesAsync();
+
+        _logger.LogInformation("Discount is successfully updated. ProductName : {ProductName}", coupon.ProductName);
+
+        return coupon.Adapt<CouponModel>();
     }
 
-    public override Task<DeleteDiscountResponse> DeleteDiscount(DeleteDiscountRequest request, ServerCallContext context)
+    public override async Task<DeleteDiscountResponse> DeleteDiscount(DeleteDiscountRequest request, ServerCallContext context)
     {
-        return base.DeleteDiscount(request, context);
+        var coupon = await _dbContext
+            .Coupons
+            .FirstOrDefaultAsync(c => c.ProductName == request.ProductName);
+        
+        if (coupon is null)
+            throw new RpcException(new Status(StatusCode.NotFound, $"Discount with ProductName {request.ProductName} not found"));
+
+        _dbContext.Coupons.Remove(coupon);
+        await _dbContext.SaveChangesAsync();
+
+        _logger.LogInformation("Discount is successfully Deleted. ProductName : {ProductName}", request.ProductName);
+
+        return new DeleteDiscountResponse { Success = true };
     }
 }
